@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_2290223_607rjveq4tu.css">
+    <style>
+        .images {
+            /* width: 290px; */
+            height: 236px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .images h5 {
+            height: 38px;
+            margin-bottom: 20px;
+            color: #471b6f;
+            font-size: 18px;
+            line-height: 36px;
+            position: relative;
+        }
+
+        .images h5 i {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            margin-right: 15px;
+            background: #59228a;
+            color: #fff;
+            text-align: center;
+        }
+
+        .images h5 .more {
+            /* width: 30px; */
+            color: #999;
+            font-size: 12px;
+            position: absolute;
+            right: 0px;
+        }
+        #swiperbox{
+            overflow: hidden;
+        }
+        .images .swiper {
+            /* width: 290px; */
+            display: flex;
+            height: 180px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .images .swiper li{
+            width: 290px;
+            height: 100%;
+            position: relative;
+        }
+        .images .swiper img {
+            /* width: 100%; */
+            height: 100%;
+        }
+
+        .images .swiper .desc {
+            height: 72px;
+            font-size: 13px;
+            line-height: 20px;
+            color: #fff;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            /* background: rgba(96,95,112,.6); */
+            background: rgba(0, 0, 0, .5);
+            position: absolute;
+            /* z-index: 1; */
+        }
+
+        .images .swiper span {
+            display: block;
+            width: 251px;
+            height: 40px;
+            padding: 16px 19px;
+            /* display: none; */
+        }
+
+        .images .foucs {
+            height: 20px;
+            position: absolute;
+            bottom: -45px;
+            left: 35%;
+
+        }
+
+        .images .foucs li {
+            margin: 0 5px;
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            background: #ABABAB;
+            border-radius: 50%;
+        }
+
+        .images .foucs li.current {
+            background: #F4930A;
+        }
+
+        #swiperbox>a {
+            width: 40px;
+            height: 58px;
+            text-align: center;
+            line-height: 50px;
+            background: rgba(0, 0, 0, .6);
+            position: absolute;
+            top: 50%;
+            text-decoration: none;
+            color: #fff;
+            font-size: 34px;
+            display: none;
+        }
+
+        #swiperbox>a:hover {
+            color: #ff7800;
+        }
+
+        #left {
+            left: 0;
+        }
+
+        #right {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="images">
+        <h5>
+            <i class="iconfont icon-tupian"></i>
+            <span>图说清华</span>
+            <a href="" class="more">更多 ></a>
+        </h5>
+        <div id="swiperbox">
+            <ul id="swiper" class="swiper">
+                <!-- <li>
+                    <a href="">
+                        <img src="https://news.tsinghua.edu.cn/__local/2/48/44/96142C25580A26C76BAA609869C_76905FED_22D8A.jpg" alt="">
+                        <div class="desc">
+                            <span>
+                                美术学院吴冠英教授作品荣获中国新闻奖新闻漫画项目一等奖
+                            </span>
+                        </div>
+                    </a>
+                </li> -->
+
+            </ul>
+
+            <ul id="foucs" class="foucs">
+                <!-- <li class="current"></li>
+                <li></li>
+                <li></li> -->
+            </ul>
+
+            <a href="javascript:;" id="left">
+                < </a>
+                    <a href="javascript:;" id="right"> > </a>
+        </div>
+    </div>
+    <div class="right"></div>
+</body>
+
+</html>
+<script src="https://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script>
+(function(){
+    $(document).ready(() => { 
+    $('.right').load('component/right.html');
+});
+
+    let outer = document.getElementById('swiperbox');
+    let wrapper = document.getElementById('swiper');
+
+    let list = document.getElementById('foucs');
+
+    let data = null;
+    let timer = null;
+
+    function getswiperData() {
+        $.ajax({
+            url: 'json/banner.json',
+            async: false,
+            success: function (res) {
+                data = res;
+                renderHtml(res);
+            }
+        });
+    }
+    getswiperData();
+    
+    function renderHtml(data) {
+        let wrapperItems = '';
+        let listItems = '';
+        data.forEach((item, index) => {
+            wrapperItems += `<li>
+                    <a href="">
+                        <img src="${item.img}" alt="">
+                        <div class="desc">
+                            <span>
+                                ${item.desc}
+                            </span>
+                        </div>
+                    </a>
+                </li>`;
+            listItems += `<li></li>`;
+        });
+        wrapperItems += `<li><img src="${data[0].img}" alt=""><div class="desc"><span>${data[0].desc}</span></div></li>`;
+        wrapper.innerHTML = wrapperItems;
+        list.innerHTML = listItems;
+    }
+
+    let step = 0;
+    function autoMove(index) {
+        step++;
+        typeof index === 'undefined' ? null : step = index;
+        if (step >= data.length + 1) {
+            wrapper.style.left = 0;
+            step = 1;
+        }
+        changeFocus();
+
+        $('#swiper').animate({
+            left: -step * 290
+        }, 500);
+    }
+    timer = setInterval(autoMove, 2000);
+
+    outer.onmouseover = function () {
+        clearInterval(timer);
+        left.style.display='block';
+        right.style.display='block';
+    }
+    outer.onmouseout = function () {
+        timer = setInterval(autoMove, 2000);
+        left.style.display='none';
+        right.style.display='none';
+    }
+
+    let tips = document.querySelectorAll('#foucs li');
+
+    function changeFocus() {
+
+        for (let i = 0; i < tips.length; i++) {
+            if (step === i) {
+                tips[i].classList.add('current');
+            } else {
+                tips[i].classList.remove('current');
+            }
+        }
+        if (step === data.length) {
+            tips[0].classList.add('current');
+        }
+    }
+    changeFocus();
+
+    function bindClick() {
+        for (let i = 0; i < tips.length; i++) {
+            tips[i].onclick = function () {
+                autoMove(i);
+            }
+        }
+    }
+    bindClick();
+
+    right.onclick = function () {
+        autoMove();
+    }
+    left.onclick = function () {
+        step -= 2;
+        if (step == -2) {
+            wrapper.style.left = -data.length * 290 + 'px';
+            step = data.length - 2;
+        }
+        autoMove();
+    }
+})()
+</script>
