@@ -1,0 +1,32 @@
+/* 清除默认样式 */
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+    color: #444;
+}
+ul {
+    list-style: none;
+}
+input {
+    border: 0;
+    outline: none;
+}
+.clearfix::after {
+    display: block;
+    clear: both;
+    content: "";
+    height: 0px;
+    visibility: hidden;
+}
+body{
+    /* background-color: #F5F7F6; */
+    background: #f4f6f6
+        url("https://news.tsinghua.edu.cn/dfiles/20186/publish/thunews/images/bg_02.jpg")
+        center top no-repeat;
+    background-position: -45px 160px;
+    color: #444;
+    font-size: 12px;
+}
